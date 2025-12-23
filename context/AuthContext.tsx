@@ -48,26 +48,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(currentUser);
       
       if (currentUser) {
-        // Ensure user document exists in Firestore
-        const userRef = doc(db, 'users', currentUser.uid);
-        const userSnap = await getDoc(userRef);
-        
-        if (userSnap.exists()) {
-          setUserData(userSnap.data() as UserData);
-        } else {
-          // Initialize basic profile metadata
-          const initialData = {
-            email: currentUser.email,
-            createdAt: new Date().toISOString(),
-            onboardingCompleted: false,
-            visibility: {
-              showDistance: true,
-              showLastActive: true,
-              discoveryPaused: false
-            }
-          };
-          await setDoc(userRef, initialData);
-          setUserData(initialData as UserData);
+        try {
+          // Ensure user document exists in Firestore
+          const userRef = doc(db, 'users', currentUser.uid);
+          const userSnap = await getDoc(userRef);
+          
+          if (userSnap.exists()) {
+            setUserData(userSnap.data() as UserData);
+          } else {
+            // Initialize basic profile metadata
+            const initialData = {
+              email: currentUser.email,
+              createdAt: new Date().toISOString(),
+              onboardingCompleted: false,
+              visibility: {
+                showDistance: true,
+                showLastActive: true,
+                discoveryPaused: false
+              }
+            };
+            await setDoc(userRef, initialData);
+            setUserData(initialData as UserData);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          // Fallback: Set minimal user data from auth profile if Firestore fails
+          setUserData({
+            email: currentUser.email || '',
+            onboardingCompleted: false
+          });
         }
       } else {
         setUserData(null);

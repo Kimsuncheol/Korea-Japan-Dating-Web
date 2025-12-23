@@ -1,9 +1,19 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { X, MapPin, Briefcase, GraduationCap, ChevronDown, Heart } from 'lucide-react';
 import { Profile } from '@/lib/mockData';
+import {
+  Box,
+  IconButton,
+  Typography,
+  Chip,
+  Stack,
+  Button,
+  Paper
+} from '@mui/material';
 
 interface ProfileDetailViewProps {
   profile: Profile;
@@ -17,89 +27,172 @@ export const ProfileDetailView: React.FC<ProfileDetailViewProps> = ({ profile, o
       animate={{ y: 0 }}
       exit={{ y: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed inset-0 z-50 bg-white overflow-y-auto"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        background: 'white',
+        overflowY: 'auto'
+      }}
     >
       {/* Back Button */}
-      <button 
+      <IconButton 
         onClick={onClose}
-        className="absolute top-6 right-6 p-2 bg-black/20 backdrop-blur-md rounded-full text-white z-10 hover:bg-black/40 transition-colors"
+        sx={{ 
+          position: 'absolute', 
+          top: 24, 
+          right: 24, 
+          bgcolor: 'rgba(0,0,0,0.2)', 
+          backdropFilter: 'blur(12px)', 
+          color: 'white',
+          zIndex: 10,
+          '&:hover': {
+            bgcolor: 'rgba(0,0,0,0.4)'
+          }
+        }}
       >
         <ChevronDown size={28} />
-      </button>
+      </IconButton>
 
-      {/* Image Gallery (Simplified) */}
-      <div className="relative h-[60vh] w-full">
-        <img 
+      {/* Image Gallery */}
+      <Box sx={{ position: 'relative', height: '60vh', width: '100%' }}>
+        <Image 
           src={profile.images[0]} 
           alt={profile.name}
-          className="w-full h-full object-cover"
+          fill
+          sizes="100vw"
+          style={{ objectFit: 'cover' }}
+          priority
         />
-        <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-white via-white/40 to-transparent">
-          <div className="flex items-center gap-3">
-             <h1 className="text-4xl font-extrabold">{profile.name}, {profile.age}</h1>
-             <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider text-white ${profile.nationality === 'Korean' ? 'bg-blue-600' : 'bg-red-600'}`}>
-                {profile.nationality}
-              </span>
-          </div>
-          <p className="text-xl text-muted flex items-center gap-1 mt-1">
+        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, p: 4, background: 'linear-gradient(to top, white, rgba(255,255,255,0.4), transparent)' }}>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+             <Typography variant="h3" fontWeight="900">
+{profile.name}, {profile.age}
+             </Typography>
+             <Chip 
+               label={profile.nationality}
+               size="small"
+               sx={{ 
+                 px: 1, 
+                 py: 0.5, 
+                 fontSize: '0.625rem', 
+                 fontWeight: 'bold', 
+                 textTransform: 'uppercase', 
+                 letterSpacing: '0.05em',
+                 bgcolor: profile.nationality === 'Korean' ? 'blue.600' : 'red.600',
+                 color: 'white'
+               }}
+             />
+          </Stack>
+          <Typography variant="h6" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
             <MapPin size={20} /> {profile.location}
-          </p>
-        </div>
-      </div>
+          </Typography>
+        </Box>
+      </Box>
 
       {/* Content */}
-      <div className="p-8 pb-32 space-y-8">
-        <section>
-          <h3 className="text-sm font-bold uppercase tracking-widest text-muted mb-3">About Me</h3>
-          <p className="text-lg leading-relaxed text-gray-700">
-            {profile.bio}
-          </p>
-        </section>
+      <Box sx={{ p: 4, pb: 16 }}>
+        <Stack spacing={4}>
+          <Box>
+            <Typography variant="caption" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary', mb: 1.5, display: 'block' }}>
+              About Me
+            </Typography>
+            <Typography variant="body1" sx={{ fontSize: '1.125rem', lineHeight: 1.75, color: 'text.primary' }}>
+              {profile.bio}
+            </Typography>
+          </Box>
 
-        <section>
-          <h3 className="text-sm font-bold uppercase tracking-widest text-muted mb-3">Interests</h3>
-          <div className="flex flex-wrap gap-2">
-            {profile.interests.map(interest => (
-              <span key={interest} className="px-4 py-2 bg-gray-100 rounded-full text-sm font-semibold text-gray-700">
-                {interest}
-              </span>
-            ))}
-          </div>
-        </section>
+          <Box>
+            <Typography variant="caption" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary', mb: 1.5, display: 'block' }}>
+              Interests
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {profile.interests.map(interest => (
+                <Chip 
+                  key={interest} 
+                  label={interest}
+                  sx={{ px: 2, py: 1, bgcolor: 'grey.100', fontWeight: '600', fontSize: '0.875rem' }}
+                />
+              ))}
+            </Box>
+          </Box>
 
-        <section className="space-y-4">
-          <div className="flex items-center gap-3 text-muted">
-            <Briefcase size={20} />
-            <span className="font-medium">Software Engineer at TechSpace</span>
-          </div>
-          <div className="flex items-center gap-3 text-muted">
-            <GraduationCap size={20} />
-            <span className="font-medium">Yonsei University</span>
-          </div>
-          <div className="flex items-center gap-3 text-muted">
-            <MapPin size={20} />
-            <span className="font-medium">Lives in {profile.location.split(',')[0]}</span>
-          </div>
-        </section>
+          <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ color: 'text.secondary' }}>
+              <Briefcase size={20} />
+              <Typography fontWeight="medium">Software Engineer at TechSpace</Typography>
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ color: 'text.secondary' }}>
+              <GraduationCap size={20} />
+              <Typography fontWeight="medium">Yonsei University</Typography>
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ color: 'text.secondary' }}>
+              <MapPin size={20} />
+              <Typography fontWeight="medium">Lives in {profile.location.split(',')[0]}</Typography>
+            </Stack>
+          </Stack>
 
-        <div className="pt-4">
-          <button className="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-rose-500 hover:bg-rose-50 transition-colors">
-            REPORT {profile.name.toUpperCase()}
-          </button>
-        </div>
-      </div>
+          <Box sx={{ pt: 2 }}>
+            <Button 
+              fullWidth
+              variant="outlined"
+              color="error"
+              sx={{ 
+                py: 2, 
+                borderRadius: 4, 
+                borderWidth: 1, 
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                '&:hover': {
+                  bgcolor: 'error.light',
+                  color: 'error.contrastText'
+                }
+              }}
+            >
+              Report {profile.name.toUpperCase()}
+            </Button>
+          </Box>
+        </Stack>
+      </Box>
 
       {/* Fixed Action Buttons */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white to-transparent pointer-events-none">
-        <div className="flex justify-center gap-6 pointer-events-auto">
-           <button className="p-4 rounded-full bg-white shadow-xl text-rose-500 border border-gray-100 scale-110 active:scale-95 transition-all">
+      <Box sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, p: 3, background: 'linear-gradient(to top, white, rgba(255,255,255,0.9), transparent)', pointerEvents: 'none' }}>
+        <Stack direction="row" justifyContent="center" spacing={3} sx={{ pointerEvents: 'auto' }}>
+           <IconButton 
+             sx={{ 
+               p: 2, 
+               bgcolor: 'white', 
+               boxShadow: 8, 
+               color: 'error.main',
+               border: '1px solid',
+               borderColor: 'grey.100',
+               transform: 'scale(1.1)',
+               '&:active': {
+                 transform: 'scale(0.95)'
+               }
+             }}
+           >
             <X size={32} strokeWidth={3} />
-          </button>
-          <button className="p-4 rounded-full tinder-gradient shadow-xl text-white scale-125 active:scale-95 transition-all">
+          </IconButton>
+          <IconButton 
+            sx={{ 
+              p: 2, 
+              background: 'linear-gradient(to right, #ec4899, #f43f5e, #fbbf24)', 
+              boxShadow: 8, 
+              color: 'white',
+              transform: 'scale(1.25)',
+              '&:active': {
+                transform: 'scale(0.95)'
+              },
+              '&:hover': {
+                background: 'linear-gradient(to right, #ec4899, #f43f5e, #fbbf24)'
+              }
+            }}
+          >
             <Heart size={36} fill="currentColor" strokeWidth={0} />
-          </button>
-        </div>
-      </div>
+          </IconButton>
+        </Stack>
+      </Box>
     </motion.div>
   );
 };

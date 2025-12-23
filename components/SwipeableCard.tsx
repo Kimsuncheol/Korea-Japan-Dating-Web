@@ -1,6 +1,8 @@
+import Image from 'next/image';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
-import { Info } from 'lucide-react';
+import { Info as InfoIcon } from '@mui/icons-material';
 import { Profile } from '@/lib/mockData';
+import { Box, Typography, Chip, IconButton, Stack } from '@mui/material';
 
 interface SwipeableCardProps {
   profile: Profile;
@@ -27,17 +29,20 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({ profile, onSwipe, 
 
   if (!isTop) {
     return (
-      <div className="absolute inset-0 w-full h-full bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100">
-        <img 
+      <Box sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', bgcolor: 'white', borderRadius: 6, overflow: 'hidden', boxShadow: 4, border: '1px solid', borderColor: 'grey.100' }}>
+        <Image 
           src={profile.images[0]} 
           alt={profile.name}
-          className="w-full h-full object-cover pointer-events-none grayscale-[20%]"
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
+          style={{ objectFit: 'cover', pointerEvents: 'none', filter: 'grayscale(20%)' }}
+          priority={false}
         />
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white">
-          <h2 className="text-2xl font-bold">{profile.name}, {profile.age}</h2>
-          <p className="text-sm opacity-80">{profile.location}</p>
-        </div>
-      </div>
+        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, p: 3, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)', color: 'white' }}>
+          <Typography variant="h6" fontWeight="bold">{profile.name}, {profile.age}</Typography>
+          <Typography variant="caption" sx={{ opacity: 0.8 }}>{profile.location}</Typography>
+        </Box>
+      </Box>
     );
   }
 
@@ -48,61 +53,91 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({ profile, onSwipe, 
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}
       whileDrag={{ scale: 1.05 }}
-      className="absolute inset-0 w-full h-full bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-100 cursor-grab active:cursor-grabbing z-10"
     >
-      {/* Visual Feedback Labels */}
-      <motion.div 
-        style={{ opacity: likeOpacity }}
-        className="absolute top-10 left-10 border-4 border-emerald-500 text-emerald-500 font-black text-4xl px-4 py-2 rounded-xl rotate-[-20deg] z-20 pointer-events-none uppercase"
-      >
-        Like
-      </motion.div>
-      
-      <motion.div 
-        style={{ opacity: nopeOpacity }}
-        className="absolute top-10 right-10 border-4 border-rose-500 text-rose-500 font-black text-4xl px-4 py-2 rounded-xl rotate-[20deg] z-20 pointer-events-none uppercase"
-      >
-        Nope
-      </motion.div>
+      <Box sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', bgcolor: 'white', borderRadius: 6, overflow: 'hidden', boxShadow: 12, border: '1px solid', borderColor: 'grey.100', cursor: 'grab', '&:active': { cursor: 'grabbing' }, zIndex: 10 }}>
+        {/* Visual Feedback Labels */}
+        <motion.div 
+          style={{ opacity: likeOpacity }}
+        >
+          <Box sx={{ position: 'absolute', top: 40, left: 40, border: '4px solid', borderColor: 'success.main', color: 'success.main', fontWeight: 'black', fontSize: '2.25rem', px: 2, py: 1, borderRadius: 3, transform: 'rotate(-20deg)', zIndex: 20, pointerEvents: 'none', textTransform: 'uppercase' }}>
+            Like
+          </Box>
+        </motion.div>
+        
+        <motion.div 
+          style={{ opacity: nopeOpacity }}
+        >
+          <Box sx={{ position: 'absolute', top: 40, right: 40, border: '4px solid', borderColor: 'error.main', color: 'error.main', fontWeight: 'black', fontSize: '2.25rem', px: 2, py: 1, borderRadius: 3, transform: 'rotate(20deg)', zIndex: 20, pointerEvents: 'none', textTransform: 'uppercase' }}>
+            Nope
+          </Box>
+        </motion.div>
 
-      <img 
-        src={profile.images[0]} 
-        alt={profile.name}
-        className="w-full h-full object-cover pointer-events-none"
-      />
-      
-      <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white">
-        <div className="flex justify-between items-end">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-3xl font-bold">{profile.name}, {profile.age}</h2>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${profile.nationality === 'Korean' ? 'bg-blue-600' : 'bg-red-600'}`}>
-                {profile.nationality}
-              </span>
-            </div>
-            <p className="text-lg opacity-90 mt-1 flex items-center gap-1">
-              <Info size={16} /> {profile.location}
-            </p>
-            <p className="mt-3 text-sm line-clamp-2 italic opacity-80">&quot;{profile.bio}&quot;</p>
-            <div className="flex gap-2 mt-4">
-              {profile.interests.map(interest => (
-                <span key={interest} className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-medium">
-                  {interest}
-                </span>
-              ))}
-            </div>
-          </div>
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDetail();
-            }}
-            className="p-2 mb-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors"
-          >
-            <Info size={24} />
-          </button>
-        </div>
-      </div>
+        <Image 
+          src={profile.images[0]} 
+          alt={profile.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
+          style={{ objectFit: 'cover', pointerEvents: 'none' }}
+          priority={true}
+        />
+        
+        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, p: 4, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)', color: 'white' }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-end">
+            <Box>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography variant="h4" fontWeight="bold">{profile.name}, {profile.age}</Typography>
+                <Chip 
+                  label={profile.nationality}
+                  size="small"
+                  sx={{ 
+                    px: 1, 
+                    py: 0.5, 
+                    fontSize: '0.625rem', 
+                    fontWeight: 'bold', 
+                    textTransform: 'uppercase', 
+                    letterSpacing: '0.05em',
+                    bgcolor: profile.nationality === 'Korean' ? 'blue.600' : 'red.600',
+                    color: 'white'
+                  }}
+                />
+              </Stack>
+              <Typography variant="body1" sx={{ opacity: 0.9, mt: 0.5, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <InfoIcon sx={{ fontSize: 16 }} /> {profile.location}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1.5, fontStyle: 'italic', opacity: 0.8, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                &quot;{profile.bio}&quot;
+              </Typography>
+              <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                {profile.interests.map(interest => (
+                  <Chip 
+                    key={interest} 
+                    label={interest}
+                    size="small"
+                    sx={{ px: 1.5, py: 0.5, bgcolor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)', color: 'white', fontSize: '0.75rem', fontWeight: 'medium' }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+            <IconButton 
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              sx={{ 
+                mb: 1, 
+                bgcolor: 'rgba(255,255,255,0.2)', 
+                backdropFilter: 'blur(12px)', 
+                color: 'white',
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.4)'
+                }
+              }}
+            >
+              <InfoIcon sx={{ fontSize: 24 }} />
+            </IconButton>
+          </Stack>
+        </Box>
+      </Box>
     </motion.div>
   );
 };

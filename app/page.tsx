@@ -1,9 +1,11 @@
 'use client';
 
 import { DiscoveryScreen } from "@/components/DiscoveryScreen";
+import { Header } from "@/components/Header";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Box, CircularProgress, Stack } from '@mui/material';
 
 export default function Home() {
   const { user, userData, loading } = useAuth();
@@ -13,26 +15,38 @@ export default function Home() {
     if (!loading) {
       if (!user) {
         router.push('/auth');
-      } else if (userData && !userData.onboardingCompleted) {
-        router.push('/onboarding');
       }
+      // } else if (userData && !userData.onboardingCompleted) {
+      //   router.push('/onboarding');
+      // }
     }
   }, [user, userData, loading, router]);
 
   if (loading || !user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="w-16 h-16 bg-rose-100 rounded-full mb-4"></div>
-          <div className="h-4 w-32 bg-slate-100 rounded"></div>
-        </div>
-      </div>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          minHeight: '100vh',
+          bgcolor: 'background.default'
+        }}
+      >
+        <Stack alignItems="center" spacing={2}>
+          <CircularProgress size={64} sx={{ color: 'primary.main' }} />
+          <Box sx={{ width: 128, height: 16, bgcolor: 'grey.100', borderRadius: 1 }} />
+        </Stack>
+      </Box>
     );
   }
 
   return (
-    <main className="min-h-screen">
-      <DiscoveryScreen />
-    </main>
+    <Box component="main" sx={{ maxWidth: 480, mx: 'auto', height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
+      <Header />
+      <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        <DiscoveryScreen />
+      </Box>
+    </Box>
   );
 }

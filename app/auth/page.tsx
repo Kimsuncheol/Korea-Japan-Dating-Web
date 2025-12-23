@@ -4,7 +4,20 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, Chrome, Heart, ChevronLeft, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Chrome, Heart, AlertCircle } from 'lucide-react';
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+  Paper,
+  Stack,
+  InputAdornment,
+  Divider,
+  Alert,
+  Link as MuiLink
+} from '@mui/material';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -49,112 +62,189 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center items-center px-6 py-12">
+    <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: 6 }}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-white rounded-3xl shadow-premium p-8 border border-slate-100"
       >
-        {/* Logo/Brand */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 tinder-gradient rounded-2xl flex items-center justify-center text-white shadow-lg mb-4 animate-heart-beat">
-            <Heart size={36} fill="currentColor" />
-          </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tighter italic">KO-JA Match</h1>
-          <p className="text-slate-500 mt-2 font-medium">Connecting Korea & Japan</p>
-        </div>
-
-        {/* Error Alert */}
-        <AnimatePresence>
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3 text-rose-600 text-sm"
+        <Paper elevation={3} sx={{ borderRadius: 4, p: 4, border: '1px solid', borderColor: 'grey.200' }}>
+          {/* Logo/Brand */}
+          <Stack alignItems="center" spacing={2} mb={4}>
+            <Box
+              sx={{
+                width: 64,
+                height: 64,
+                background: 'linear-gradient(to right, #ec4899, #f43f5e, #fbbf24)',
+                borderRadius: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                boxShadow: 4
+              }}
             >
-              <AlertCircle size={18} className="shrink-0 mt-0.5" />
-              <p>{error}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <Heart size={36} fill="currentColor" />
+            </Box>
+            <Typography variant="h4" fontWeight="black" sx={{ fontStyle: 'italic', letterSpacing: '-0.05em' }}>
+              KO-JA Match
+            </Typography>
+            <Typography variant="body2" color="text.secondary" fontWeight="medium">
+              Connecting Korea & Japan
+            </Typography>
+          </Stack>
 
-        {/* Form */}
-        <form onSubmit={handleAuth} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input 
-                type="email" 
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
-              />
-            </div>
-          </div>
+          {/* Error Alert */}
+          <AnimatePresence>
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <Alert severity="error" icon={<AlertCircle size={18} />} sx={{ mb: 3, borderRadius: 3 }}>
+                  {error}
+                </Alert>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input 
-                type="password" 
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
-              />
-            </div>
-          </div>
+          {/* Form */}
+          <Box component="form" onSubmit={handleAuth}>
+            <Stack spacing={3}>
+              <Box>
+                <Typography variant="caption" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary', ml: 0.5 }}>
+                  Email Address
+                </Typography>
+                <TextField 
+                  required
+                  fullWidth
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Mail size={18} className="text-slate-400" />
+                      </InputAdornment>
+                    ),
+                    sx: { borderRadius: 3, bgcolor: 'grey.50' }
+                  }}
+                  sx={{ mt: 0.5 }}
+                />
+              </Box>
 
-          <button 
-            type="submit"
+              <Box>
+                <Typography variant="caption" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary', ml: 0.5 }}>
+                  Password
+                </Typography>
+                <TextField 
+                  required
+                  fullWidth
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock size={18} className="text-slate-400" />
+                      </InputAdornment>
+                    ),
+                    sx: { borderRadius: 3, bgcolor: 'grey.50' }
+                  }}
+                  sx={{ mt: 0.5 }}
+                />
+              </Box>
+
+              <Button 
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                disabled={loading}
+                sx={{ 
+                  py: 2, 
+                  borderRadius: 4,
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  textTransform: 'none',
+                  background: 'linear-gradient(to right, #ec4899, #f43f5e, #fbbf24)',
+                  boxShadow: 4,
+                  '&:hover': {
+                    boxShadow: 8
+                  },
+                  '&:active': {
+                    transform: 'scale(0.98)'
+                  }
+                }}
+              >
+                {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+              </Button>
+            </Stack>
+          </Box>
+
+          <Box sx={{ position: 'relative', my: 4 }}>
+            <Divider />
+            <Typography
+              variant="body2"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                px: 2,
+                color: 'text.secondary',
+                fontStyle: 'italic'
+              }}
+            >
+              OR
+            </Typography>
+          </Box>
+
+          {/* Social Login */}
+          <Button 
+            fullWidth
+            variant="outlined"
+            size="large"
+            onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full py-4 tinder-gradient text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none mt-4 text-lg"
+            startIcon={<Chrome size={20} className="text-primary" />}
+            sx={{ 
+              py: 2, 
+              borderRadius: 4,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderColor: 'grey.300',
+              '&:active': {
+                transform: 'scale(0.98)'
+              }
+            }}
           >
-            {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
-          </button>
-        </form>
+            Continue with Google
+          </Button>
 
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-slate-400 font-medium italic">OR</span>
-          </div>
-        </div>
-
-        {/* Social Login */}
-        <button 
-          onClick={handleGoogleSignIn}
-          disabled={loading}
-          className="w-full py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-70"
-        >
-          <Chrome size={20} className="text-primary" />
-          Continue with Google
-        </button>
-
-        {/* Toggle */}
-        <p className="text-center mt-8 text-slate-500 font-medium">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
-          <button 
-            onClick={() => setIsLogin(!isLogin)}
-            className="ml-2 text-primary font-bold hover:underline"
-          >
-            {isLogin ? 'Sign Up' : 'Sign In'}
-          </button>
-        </p>
+          {/* Toggle */}
+          <Typography variant="body2" textAlign="center" mt={4} color="text.secondary">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}
+            {' '}
+            <MuiLink
+              component="button"
+              type="button"
+              onClick={() => setIsLogin(!isLogin)}
+              sx={{ fontWeight: 'bold', color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              {isLogin ? 'Sign Up' : 'Sign In'}
+            </MuiLink>
+          </Typography>
+        </Paper>
       </motion.div>
 
       {/* Footer Info */}
-      <p className="mt-8 text-slate-400 text-sm max-w-xs text-center leading-relaxed">
+      <Typography variant="caption" textAlign="center" mt={4} color="text.secondary" sx={{ maxWidth: 'xs', lineHeight: 1.6 }}>
         By continuing, you agree to our Terms of Service and Privacy Policy.
-      </p>
-    </div>
+      </Typography>
+    </Container>
   );
 }

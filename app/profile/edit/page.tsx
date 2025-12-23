@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -10,6 +11,20 @@ import { AnimatePresence } from 'framer-motion';
 import { Camera, ChevronLeft, Loader2, Trash2, Eye } from 'lucide-react';
 import { ProfileDetailView } from '@/components/ProfileDetailView';
 import { Profile } from '@/lib/mockData';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Paper,
+  Stack,
+  CircularProgress,
+  Switch,
+  FormControlLabel
+} from '@mui/material';
 
 export default function ProfileEditPage() {
   const { user, userData } = useAuth();
@@ -107,7 +122,7 @@ export default function ProfileEditPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50', pb: 10 }}>
       {/* Preview Modal */}
       <AnimatePresence>
         {showPreview && (
@@ -127,154 +142,248 @@ export default function ProfileEditPage() {
         )}
       </AnimatePresence>
 
-      <header className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
-        <button onClick={() => router.back()} className="p-2 -ml-2 text-slate-600">
-          <ChevronLeft />
-        </button>
-        <h1 className="font-bold text-lg">Edit Profile</h1>
-        <div className="flex gap-2">
-          <button 
-            onClick={() => setShowPreview(true)}
-            className="p-2 text-primary bg-primary/10 rounded-full"
-            title="Preview Profile"
-          >
-            <Eye size={20} />
-          </button>
-          <button 
-            onClick={handleSubmit} 
-            disabled={loading}
-            className="px-4 py-2 bg-primary text-white rounded-full font-bold text-sm disabled:opacity-50"
-          >
-            {loading ? <Loader2 className="animate-spin" size={16} /> : 'Save'}
-          </button>
-        </div>
-      </header>
+      <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'white', borderBottom: '1px solid', borderColor: 'grey.200', backdropFilter: 'blur(12px)' }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <IconButton edge="start" onClick={() => router.back()} sx={{ mr: 2, color: 'text.secondary' }}>
+            <ChevronLeft />
+          </IconButton>
+          <Typography variant="h6" fontWeight="bold" sx={{ flexGrow: 1 }}>
+            Edit Profile
+          </Typography>
+          <Stack direction="row" spacing={1}>
+            <IconButton 
+              onClick={() => setShowPreview(true)}
+              sx={{ bgcolor: 'primary.light', color: 'primary.dark' }}
+              title="Preview Profile"
+            >
+              <Eye size={20} />
+            </IconButton>
+            <Button 
+              onClick={handleSubmit} 
+              disabled={loading}
+              variant="contained"
+              size="small"
+              sx={{ borderRadius: 10, px: 2, fontWeight: 'bold', textTransform: 'none' }}
+            >
+              {loading ? <Loader2 className="animate-spin" size={16} /> : 'Save'}
+            </Button>
+          </Stack>
+        </Toolbar>
+      </AppBar>
 
-      <main className="p-6 space-y-8 max-w-md mx-auto">
-        {/* Photos Section */}
-        <section>
-          <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Photos</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {[0, 1, 2, 3, 4, 5].map((index) => (
-              <div key={index} className="aspect-[2/3] relative rounded-xl overflow-hidden bg-white shadow-sm border border-slate-200 group">
-                {formData.photos[index] ? (
-                  <>
-                    <img src={formData.photos[index]} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
-                    <button 
-                      onClick={() => removePhoto(index)}
-                      className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+      <Box sx={{ p: 3, maxWidth: 480, mx: 'auto' }}>
+        <Stack spacing={4}>
+          {/* Photos Section */}
+          <Box>
+            <Typography variant="caption" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary', mb: 2, display: 'block' }}>
+              Photos
+            </Typography>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1.5 }}>
+              {[0, 1, 2, 3, 4, 5].map((index) => (
+                <Box 
+                  key={index}
+                  sx={{ 
+                    aspectRatio: '2/3', 
+                    position: 'relative', 
+                    borderRadius: 3, 
+                    overflow: 'hidden', 
+                    bgcolor: 'white', 
+                    boxShadow: 1,
+                    border: '1px solid',
+                    borderColor: 'grey.200',
+                    '&:hover .remove-button': {
+                      opacity: 1
+                    }
+                  }}
+                >
+                  {formData.photos[index] ? (
+                    <>
+                      <Image 
+                        src={formData.photos[index]} 
+                        alt={`Photo ${index + 1}`}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                      <IconButton 
+                        onClick={() => removePhoto(index)}
+                        className="remove-button"
+                        sx={{ 
+                          position: 'absolute', 
+                          top: 4, 
+                          right: 4, 
+                          bgcolor: 'rgba(0,0,0,0.5)', 
+                          color: 'white',
+                          opacity: 0,
+                          transition: 'opacity 0.2s',
+                          '&:hover': {
+                            bgcolor: 'rgba(0,0,0,0.7)'
+                          }
+                        }}
+                        size="small"
+                      >
+                        <Trash2 size={14} />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <Box
+                      component="label"
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          bgcolor: 'grey.50'
+                        }
+                      }}
                     >
-                      <Trash2 size={14} />
-                    </button>
-                  </>
-                ) : (
-                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors">
-                    {uploading ? (
-                      <Loader2 className="animate-spin text-slate-300" />
-                    ) : (
-                      <Camera className="text-slate-300" />
-                    )}
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={(e) => handleImageUpload(e, index)}
-                      disabled={uploading}
-                    />
-                  </label>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
+                      {uploading ? (
+                        <CircularProgress size={24} sx={{ color: 'grey.300' }} />
+                      ) : (
+                        <Camera className="text-slate-300" />
+                      )}
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        style={{ display: 'none' }}
+                        onChange={(e) => handleImageUpload(e, index)}
+                        disabled={uploading}
+                      />
+                    </Box>
+                  )}
+                </Box>
+              ))}
+            </Box>
+          </Box>
 
-        {/* Basic Info */}
-        <section className="space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400">About You</h2>
-          
-          <div className="bg-white p-4 rounded-2xl border border-slate-200">
-             <label className="block text-xs font-bold text-slate-400 mb-1">Display Name</label>
-             <input 
-               type="text"
-               value={formData.displayName}
-               onChange={e => setFormData({...formData, displayName: e.target.value})}
-               className="w-full text-lg font-medium outline-none text-slate-800"
-               placeholder="Your name"
-             />
-          </div>
+          {/* Basic Info */}
+          <Stack spacing={2}>
+            <Typography variant="caption" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary' }}>
+              About You
+            </Typography>
+            
+            <Paper elevation={0} sx={{ p: 2, borderRadius: 4, border: '1px solid', borderColor: 'grey.200' }}>
+              <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
+                Display Name
+              </Typography>
+              <TextField 
+                fullWidth
+                variant="standard"
+                value={formData.displayName}
+                onChange={e => setFormData({...formData, displayName: e.target.value})}
+                placeholder="Your name"
+                InputProps={{
+                  disableUnderline: true,
+                  sx: { fontSize: '1.125rem', fontWeight: 'medium' }
+                }}
+              />
+            </Paper>
 
-           <div className="bg-white p-4 rounded-2xl border border-slate-200">
-             <label className="block text-xs font-bold text-slate-400 mb-1">Bio</label>
-             <textarea 
-               value={formData.bio}
-               onChange={e => setFormData({...formData, bio: e.target.value})}
-               className="w-full text-base font-medium outline-none text-slate-800 resize-none"
-               rows={4}
-               placeholder="Write something about yourself..."
-             />
-          </div>
+            <Paper elevation={0} sx={{ p: 2, borderRadius: 4, border: '1px solid', borderColor: 'grey.200' }}>
+              <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
+                Bio
+              </Typography>
+              <TextField 
+                fullWidth
+                multiline
+                rows={4}
+                variant="standard"
+                value={formData.bio}
+                onChange={e => setFormData({...formData, bio: e.target.value})}
+                placeholder="Write something about yourself..."
+                InputProps={{
+                  disableUnderline: true,
+                  sx: { fontSize: '1rem', fontWeight: 'medium' }
+                }}
+              />
+            </Paper>
 
-           <div className="grid grid-cols-2 gap-4">
-             <div className="bg-white p-4 rounded-2xl border border-slate-200">
-               <label className="block text-xs font-bold text-slate-400 mb-1">Age</label>
-               <input 
-                 type="number"
-                 value={formData.age}
-                 onChange={e => setFormData({...formData, age: e.target.value})}
-                 className="w-full text-lg font-medium outline-none text-slate-800"
-                 placeholder="25"
-               />
-            </div>
-             <div className="bg-white p-4 rounded-2xl border border-slate-200">
-               <label className="block text-xs font-bold text-slate-400 mb-1">Location</label>
-               <input 
-                 type="text"
-                 value={formData.location}
-                 onChange={e => setFormData({...formData, location: e.target.value})}
-                 className="w-full text-lg font-medium outline-none text-slate-800"
-                 placeholder="Seoul"
-               />
-            </div>
-           </div>
-        </section>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+              <Paper elevation={0} sx={{ p: 2, borderRadius: 4, border: '1px solid', borderColor: 'grey.200' }}>
+                <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
+                  Age
+                </Typography>
+                <TextField 
+                  fullWidth
+                  variant="standard"
+                  type="number"
+                  value={formData.age}
+                  onChange={e => setFormData({...formData, age: e.target.value})}
+                  placeholder="25"
+                  InputProps={{
+                    disableUnderline: true,
+                    sx: { fontSize: '1.125rem', fontWeight: 'medium' }
+                  }}
+                />
+              </Paper>
+              <Paper elevation={0} sx={{ p: 2, borderRadius: 4, border: '1px solid', borderColor: 'grey.200' }}>
+                <Typography variant="caption" fontWeight="bold" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
+                  Location
+                </Typography>
+                <TextField 
+                  fullWidth
+                  variant="standard"
+                  value={formData.location}
+                  onChange={e => setFormData({...formData, location: e.target.value})}
+                  placeholder="Seoul"
+                  InputProps={{
+                    disableUnderline: true,
+                    sx: { fontSize: '1.125rem', fontWeight: 'medium' }
+                  }}
+                />
+              </Paper>
+            </Box>
+          </Stack>
 
-        {/* Visibility Settings */}
-        <section className="space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400">Visibility Settings</h2>
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-            <div className="p-4 flex items-center justify-between border-b border-slate-100">
-              <span className="font-medium text-slate-700">Show Distance</span>
-              <button 
-                onClick={() => setFormData(prev => ({...prev, visibility: {...prev.visibility, showDistance: !prev.visibility.showDistance}}))}
-                className={`w-12 h-7 rounded-full transition-colors relative ${formData.visibility?.showDistance ? 'bg-primary' : 'bg-slate-200'}`}
-              >
-                <div className={`w-5 h-5 bg-white rounded-full shadow-sm absolute top-1 transition-transform ${formData.visibility?.showDistance ? 'left-6' : 'left-1'}`} />
-              </button>
-            </div>
-            <div className="p-4 flex items-center justify-between border-b border-slate-100">
-              <span className="font-medium text-slate-700">Show Last Active</span>
-              <button 
-                onClick={() => setFormData(prev => ({...prev, visibility: {...prev.visibility, showLastActive: !prev.visibility.showLastActive}}))}
-                className={`w-12 h-7 rounded-full transition-colors relative ${formData.visibility?.showLastActive ? 'bg-primary' : 'bg-slate-200'}`}
-              >
-                <div className={`w-5 h-5 bg-white rounded-full shadow-sm absolute top-1 transition-transform ${formData.visibility?.showLastActive ? 'left-6' : 'left-1'}`} />
-              </button>
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <div>
-                <span className="font-medium text-slate-700 block">Pause Discovery</span>
-                <span className="text-xs text-slate-400">Hide your profile from new people</span>
-              </div>
-              <button 
-                onClick={() => setFormData(prev => ({...prev, visibility: {...prev.visibility, discoveryPaused: !prev.visibility.discoveryPaused}}))}
-                className={`w-12 h-7 rounded-full transition-colors relative ${formData.visibility?.discoveryPaused ? 'bg-primary' : 'bg-slate-200'}`}
-              >
-                <div className={`w-5 h-5 bg-white rounded-full shadow-sm absolute top-1 transition-transform ${formData.visibility?.discoveryPaused ? 'left-6' : 'left-1'}`} />
-              </button>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
+          {/* Visibility Settings */}
+          <Stack spacing={2}>
+            <Typography variant="caption" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary' }}>
+              Visibility Settings
+            </Typography>
+            <Paper elevation={0} sx={{ borderRadius: 4, border: '1px solid', borderColor: 'grey.200', overflow: 'hidden' }}>
+              <FormControlLabel
+                control={
+                  <Switch 
+                    checked={formData.visibility?.showDistance}
+                    onChange={() => setFormData(prev => ({...prev, visibility: {...prev.visibility, showDistance: !prev.visibility.showDistance}}))}
+                  />
+                }
+                label="Show Distance"
+                sx={{ m: 0, px: 2, py: 1.5, width: '100%', justifyContent: 'space-between', borderBottom: '1px solid', borderColor: 'grey.100' }}
+                labelPlacement="start"
+              />
+              <FormControlLabel
+                control={
+                  <Switch 
+                    checked={formData.visibility?.showLastActive}
+                    onChange={() => setFormData(prev => ({...prev, visibility: {...prev.visibility, showLastActive: !prev.visibility.showLastActive}}))}
+                  />
+                }
+                label="Show Last Active"
+                sx={{ m: 0, px: 2, py: 1.5, width: '100%', justifyContent: 'space-between', borderBottom: '1px solid', borderColor: 'grey.100' }}
+                labelPlacement="start"
+              />
+              <Box sx={{ px: 2, py: 1.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box>
+                  <Typography variant="body2" fontWeight="medium">
+                    Pause Discovery
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Hide your profile from new people
+                  </Typography>
+                </Box>
+                <Switch 
+                  checked={formData.visibility?.discoveryPaused}
+                  onChange={() => setFormData(prev => ({...prev, visibility: {...prev.visibility, discoveryPaused: !prev.visibility.discoveryPaused}}))}
+                />
+              </Box>
+            </Paper>
+          </Stack>
+        </Stack>
+      </Box>
+    </Box>
   );
 }

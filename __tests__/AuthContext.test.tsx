@@ -1,57 +1,46 @@
-import { render, screen } from '@testing-library/react';
-import { AuthProvider, useAuth } from '../context/AuthContext';
-import { act } from 'react-dom/test-utils';
+import { render, screen } from '@testing-library/react'
+import { AuthProvider, useAuth } from '@/context/AuthContext'
 
-// Mock Firebase
-jest.mock('firebase/app', () => ({
-  initializeApp: jest.fn(),
-  getApps: jest.fn(() => []),
-  getApp: jest.fn(),
-}));
-
-jest.mock('firebase/auth', () => ({
-  getAuth: jest.fn(),
-  onAuthStateChanged: jest.fn((auth, callback) => {
-    // Simulate loading state then no user
-    callback(null);
-    return () => {};
-  }),
-  signInWithEmailAndPassword: jest.fn(),
-  createUserWithEmailAndPassword: jest.fn(),
-  signOut: jest.fn(),
-}));
-
-jest.mock('firebase/firestore', () => ({
-  getFirestore: jest.fn(),
-  doc: jest.fn(),
-  getDoc: jest.fn(),
-  setDoc: jest.fn(),
-}));
-
-jest.mock('firebase/storage', () => ({
-  getStorage: jest.fn(),
-}));
-
-// Test Component
+// Test component to access auth context
 const TestComponent = () => {
-  const { user, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
-  return <div>{user ? 'Logged In' : 'Logged Out'}</div>;
-};
+  const { user, loading } = useAuth()
+  return (
+    <div>
+      <div data-testid="loading">{loading ? 'Loading' : 'Not Loading'}</div>
+      <div data-testid="user">{user ? 'Logged In' : 'Logged Out'}</div>
+    </div>
+  )
+}
 
 describe('AuthContext', () => {
-  it('provides authentication state', async () => {
-    // Basic smoke test to ensure provider renders
-    // Since onAuthStateChanged is mocked to return immediately, we might see Logged Out directly
-    // or need to wait.
+  it('provides initial loading state', () => {
+    render(
+      <AuthProvider>
+        <div>Test</div>
+      </AuthProvider>
+    )
+    // AuthProvider shows children only when not loading
+    expect(screen.getByText('Test')).toBeInTheDocument()
+  })
+
+  it('useAuth hook throws error when used outside provider', () => {
+    // Suppress console.error for this test
+    const spy = jest.spyOn(console, 'error').mockImplementation()
     
-    // Note: In a real environment we would use more sophisticated mocking for Firebase.
-    // This confirms the context doesn't crash.
+    expect(() => {
+      render(<TestComponent />)
+    }).toThrow('useAuth must be used within an AuthProvider')
     
-    /* 
-       For now, since we haven't set up Jest completely with appropriate config for Next.js 13+ App Router
-       and specific mocks, we'll write a simple test file but might skip actual execution if environment is missing jest config.
-       The user asked to "implement test code".
-    */
-  });
-});
+    spy.mockRestore()
+  })
+
+  it('provides authentication context values', () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    )
+    
+    expect(screen.getByTestId('user')).toHaveTextContent('Logged Out')
+  })
+})
