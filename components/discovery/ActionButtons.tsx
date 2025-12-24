@@ -5,12 +5,15 @@ import {
   Favorite as FavoriteIcon,
   Star as StarIcon,
 } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
 interface ActionButtonsProps {
   onSwipe: (direction: 'left' | 'right') => void;
 }
 
 export const ActionButtons: React.FC<ActionButtonsProps> = ({ onSwipe }) => {
+  const theme = useTheme();
+
   return (
     <Stack direction="row" justifyContent="center" alignItems="center" spacing={3} sx={{ py: 4 }}>
       <IconButton 
@@ -19,30 +22,30 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ onSwipe }) => {
           p: 2, 
           bgcolor: 'white', 
           boxShadow: 8, 
-          color: 'rose.500', 
+          color: theme.palette.error.main, 
           border: '1px solid', 
-          borderColor: 'grey.100',
+          borderColor: '#f5f5f5',
           '&:hover': { transform: 'scale(1.1)', bgcolor: 'white' },
           '&:active': { transform: 'scale(0.95)' },
           transition: 'transform 0.2s'
         }}
       >
-        <CloseIcon sx={{ fontSize: 32, color: 'rose.500' }} />
+        <CloseIcon sx={{ fontSize: 32, color: theme.palette.error.main }} />
       </IconButton>
       <IconButton 
         sx={{ 
           p: 1.5, 
           bgcolor: 'white', 
           boxShadow: 4, 
-          color: 'amber.400', 
+          color: theme.palette.warning.main, 
           border: '1px solid', 
-          borderColor: 'grey.100',
+          borderColor: '#f5f5f5',
           '&:hover': { transform: 'scale(1.1)', bgcolor: 'white' },
           '&:active': { transform: 'scale(0.95)' },
           transition: 'transform 0.2s'
         }}
       >
-        <StarIcon sx={{ fontSize: 24, color: 'amber.400' }} />
+        <StarIcon sx={{ fontSize: 24, color: theme.palette.warning.main }} />
       </IconButton>
       <IconButton 
         onClick={() => onSwipe('right')}
@@ -50,15 +53,15 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ onSwipe }) => {
           p: 2, 
           bgcolor: 'white', 
           boxShadow: 8, 
-          color: 'green.500', 
+          color: theme.palette.success.main, 
           border: '1px solid', 
-          borderColor: 'grey.100',
+          borderColor: '#f5f5f5',
           '&:hover': { transform: 'scale(1.1)', bgcolor: 'white' },
           '&:active': { transform: 'scale(0.95)' },
           transition: 'transform 0.2s'
         }}
       >
-        <FavoriteIcon sx={{ fontSize: 32, color: 'green.500' }} />
+        <FavoriteIcon sx={{ fontSize: 32, color: theme.palette.success.main }} />
       </IconButton>
     </Stack>
   );

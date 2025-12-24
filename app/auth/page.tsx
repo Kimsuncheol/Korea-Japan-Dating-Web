@@ -62,7 +62,8 @@ export default function AuthPage() {
   };
 
   return (
-    <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: 6 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', maxWidth: 480, mx: 'auto' }}>
+      <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: 6 }}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -246,5 +247,6 @@ export default function AuthPage() {
         By continuing, you agree to our Terms of Service and Privacy Policy.
       </Typography>
     </Container>
+    </Box>
   );
 }

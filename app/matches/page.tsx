@@ -83,7 +83,7 @@ export default function MatchesPage() {
 
   if (loading) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', alignItems: 'center', justifyContent: 'center', maxWidth: 480, mx: 'auto' }}>
         <Stack alignItems="center" spacing={2}>
           <CircularProgress size={64} sx={{ color: 'primary.main' }} />
           <Typography color="text.secondary">Loading matches...</Typography>
@@ -93,7 +93,7 @@ export default function MatchesPage() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', maxWidth: 480, mx: 'auto', borderLeft: '1px solid', borderRight: '1px solid', borderColor: 'grey.200' }}>
       {/* Header */}
       <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'white', borderBottom: '1px solid', borderColor: 'grey.200', backdropFilter: 'blur(12px)' }}>
         <Toolbar>

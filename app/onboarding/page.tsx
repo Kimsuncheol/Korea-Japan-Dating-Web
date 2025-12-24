@@ -462,7 +462,8 @@ export default function OnboardingPage() {
   ];
 
   return (
-    <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', py: 3 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', maxWidth: 480, mx: 'auto' }}>
+      <Container maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', py: 3 }}>
       {/* Progress Bar */}
       <Box sx={{ width: '100%', mb: 4, mt: 2 }}>
         <LinearProgress 
@@ -561,5 +562,6 @@ export default function OnboardingPage() {
         )}
       </Box>
     </Container>
+    </Box>
   );
 }

@@ -8,7 +8,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { AnimatePresence } from 'framer-motion';
-import { Camera, ChevronLeft, Loader2, Trash2, Eye } from 'lucide-react';
+import { Camera, ChevronLeft, Loader2, Trash2, Eye, LogOut } from 'lucide-react';
 import { ProfileDetailView } from '@/components/ProfileDetailView';
 import { Profile } from '@/lib/mockData';
 import {
@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 
 export default function ProfileEditPage() {
-  const { user, userData } = useAuth();
+  const { user, userData, logout } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -99,6 +99,17 @@ export default function ProfileEditPage() {
     setFormData(prev => ({ ...prev, photos: newPhotos }));
   };
 
+  const handleLogout = async () => {
+    if (confirm('Are you sure you want to sign out?')) {
+      try {
+        await logout();
+        router.push('/auth');
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -122,7 +133,7 @@ export default function ProfileEditPage() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50', pb: 10 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 10, maxWidth: 480, mx: 'auto', borderLeft: '1px solid', borderRight: '1px solid', borderColor: 'grey.200' }}>
       {/* Preview Modal */}
       <AnimatePresence>
         {showPreview && (
@@ -381,6 +392,33 @@ export default function ProfileEditPage() {
                 />
               </Box>
             </Paper>
+          </Stack>
+
+          {/* Account Actions */}
+          <Stack spacing={2}>
+            <Typography variant="caption" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary' }}>
+              Account
+            </Typography>
+            <Button
+              variant="outlined"
+              color="error"
+              fullWidth
+              startIcon={<LogOut size={20} />}
+              onClick={handleLogout}
+              sx={{ 
+                py: 1.5, 
+                borderRadius: 4, 
+                fontWeight: 'bold', 
+                textTransform: 'none',
+                borderColor: 'error.light',
+                '&:hover': {
+                  bgcolor: 'error.50',
+                  borderColor: 'error.main'
+                }
+              }}
+            >
+              Sign Out
+            </Button>
           </Stack>
         </Stack>
       </Box>
