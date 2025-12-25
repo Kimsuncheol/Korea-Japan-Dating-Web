@@ -5,6 +5,7 @@ import {
   FlashOn as FlashOnIcon,
   ChatBubble as ChatBubbleIcon,
   Person as PersonIcon,
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
 
 export const BottomNav: React.FC = () => {
@@ -22,6 +23,11 @@ export const BottomNav: React.FC = () => {
         <BottomNavigationAction 
           icon={<PersonIcon sx={{ fontSize: 24 }} />} 
           onClick={() => router.push('/profile/edit')}
+          sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' }, minWidth: 0 }} 
+        />
+        <BottomNavigationAction 
+          icon={<SettingsIcon sx={{ fontSize: 24 }} />} 
+          onClick={() => router.push('/settings')}
           sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' }, minWidth: 0 }} 
         />
       </BottomNavigation>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   AppBar, 
   Toolbar, 
@@ -10,28 +11,11 @@ import {
 } from '@mui/material';
 import { 
   Zap, 
-  Sun, 
-  Moon, 
-  Monitor
+  Settings
 } from 'lucide-react';
-import { useThemeContext } from '@/context/ThemeContext';
 
 export const Header = () => {
-  const { mode, setMode } = useThemeContext();
-
-  const handleToggleTheme = () => {
-    const nextMode = mode === 'light' ? 'dark' : mode === 'dark' ? 'system' : 'light';
-    setMode(nextMode);
-  };
-
-  const getThemeIcon = () => {
-    switch (mode) {
-      case 'light': return <Sun size={24} />;
-      case 'dark': return <Moon size={24} />;
-      case 'system': return <Monitor size={24} />;
-      default: return <Sun size={24} />;
-    }
-  };
+  const router = useRouter();
 
   return (
     <AppBar position="static" elevation={0} sx={{ bgcolor: 'background.paper', color: 'text.primary', borderBottom: 1, borderColor: 'divider' }}>
@@ -46,10 +30,10 @@ export const Header = () => {
             </IconButton>
 
             <IconButton 
-              onClick={handleToggleTheme}
+              onClick={() => router.push('/settings')}
               sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
             >
-              {getThemeIcon()}
+              <Settings size={24} />
             </IconButton>
         </Box>
       </Toolbar>
